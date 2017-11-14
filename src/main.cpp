@@ -252,6 +252,25 @@ int main() {
           }
 
           bool too_close = false;
+          int old_lane=lane;
+
+          double safe_ahead = 15;
+          double safe_behind = 15;
+
+//          double right_behind_s;
+//          double right_ahead_s;
+//          double far_right_behind_s;
+//          double far_right_ahead_s;
+//          double left_behind_s;
+//          double left_ahead_s;
+//          double far_left_behind_s;
+//          double far_left_ahead_s;
+          double first_behind_s;
+          double second_behind_s;
+          double third_behind_s;
+          double first_ahead_s;
+          double second_ahead_s;
+          double third_ahead_s;
 
           // find ref_v to use
           for(int i=0; i<sensor_fusion.size(); i++)
@@ -270,18 +289,234 @@ int main() {
               {
 //                ref_vel = 29.5; //mph
                 too_close = true;
-
-                if (lane > 0)
-                {
-                  lane = 0;
-                }
               }
             }
           }
 
           if (too_close)
           {
-            ref_vel -= 0.224;
+//            ref_vel -= 0.224;
+            ref_vel -= 0.1;
+
+            // plan for next move
+            first_behind_s = -100;
+            second_behind_s = -100;
+            third_behind_s = -100;
+            first_ahead_s = 100;
+            second_ahead_s = 100;
+            third_ahead_s = 100;
+            for(int i=0; i<sensor_fusion.size(); i++)
+            {
+              float d = sensor_fusion[i][6];
+
+              if(d < (2+4*0+2) && d > (2+4*0-2))
+              {
+                double vx = sensor_fusion[i][3];
+                double vy = sensor_fusion[i][4];
+                double check_speed = sqrt(vx * vx + vy * vy);
+                double check_car_s = sensor_fusion[i][5];
+                check_car_s += ((double) prev_size * 0.02 * check_speed);
+
+                if(check_car_s > car_s)
+                  // ahead
+                {
+                  if(check_car_s - car_s < first_ahead_s)
+                  {
+                    first_ahead_s = check_car_s - car_s;
+                  }
+                } else
+                  // behind
+                {
+                  if(check_car_s - car_s > first_behind_s)
+                  {
+                    first_behind_s = check_car_s - car_s;
+                  }
+                }
+              } else if(d < (2+4*1+2) && d > (2+4*1-2))
+              {
+                double vx = sensor_fusion[i][3];
+                double vy = sensor_fusion[i][4];
+                double check_speed = sqrt(vx * vx + vy * vy);
+                double check_car_s = sensor_fusion[i][5];
+                check_car_s += ((double) prev_size * 0.02 * check_speed);
+
+                if(check_car_s > car_s)
+                  // ahead
+                {
+                  if(check_car_s - car_s < second_ahead_s)
+                  {
+                    second_ahead_s = check_car_s - car_s;
+                  }
+                } else
+                  // behind
+                {
+                  if(check_car_s - car_s > second_behind_s)
+                  {
+                    second_behind_s = check_car_s - car_s;
+                  }
+                }
+              } else if(d < (2+4*2+2) && d > (2+4*2-2))
+              {
+                double vx = sensor_fusion[i][3];
+                double vy = sensor_fusion[i][4];
+                double check_speed = sqrt(vx * vx + vy * vy);
+                double check_car_s = sensor_fusion[i][5];
+                check_car_s += ((double) prev_size * 0.02 * check_speed);
+
+                if(check_car_s > car_s)
+                  // ahead
+                {
+                  if(check_car_s - car_s < third_ahead_s)
+                  {
+                    third_ahead_s = check_car_s - car_s;
+                  }
+                } else
+                  // behind
+                {
+                  if(check_car_s - car_s > third_behind_s)
+                  {
+                    third_behind_s = check_car_s - car_s;
+                  }
+                }
+              }
+
+
+//              if (lane > 0)
+//              // think about left
+//              {
+//                int left_lane = lane - 1;
+//                left_behind_s = - 100;
+//                left_ahead_s = 100;
+//                if(d < (2+4*left_lane+2) && d > (2+4*left_lane-2))
+//                {
+//                  double vx = sensor_fusion[i][3];
+//                  double vy = sensor_fusion[i][4];
+//                  double check_speed = sqrt(vx * vx + vy * vy);
+//                  double check_car_s = sensor_fusion[i][5];
+//
+//                  check_car_s += ((double) prev_size * 0.02 * check_speed);
+//                  if (check_car_s > car_s)
+//                  // ahead
+//                  {
+//                    if (check_car_s - car_s < left_ahead_s)
+//                    {
+//                      left_ahead_s = check_car_s;
+//                    }
+//                  }
+//                  else{
+//                  // behind
+//                    if (check_car_s - car_s > left_behind_s)
+//                    {
+//                      left_behind_s = check_car_s;
+//                    }
+//                  }
+//                }
+//                if ((left_ahead_s > safe_ahead) && (left_behind_s < safe_behind))
+//                // safe to merge left
+//                {
+//                  turn_left = true;
+//                }
+//
+//              }
+//              if (lane < 3)
+//              // think about right
+//              {
+//                int right_lane = lane + 1;
+//                right_behind_s = - 100;
+//                right_ahead_s = 100;
+//                if(d < (2+4*right_lane+2) && d > (2+4*right_lane-2))
+//                {
+//                  double vx = sensor_fusion[i][3];
+//                  double vy = sensor_fusion[i][4];
+//                  double check_speed = sqrt(vx * vx + vy * vy);
+//                  double check_car_s = sensor_fusion[i][5];
+//
+//                  check_car_s += ((double) prev_size * 0.02 * check_speed);
+//                  if (check_car_s > car_s)
+//                    // ahead
+//                  {
+//                    if (check_car_s - car_s < right_ahead_s)
+//                    {
+//                      right_ahead_s = check_car_s;
+//                    }
+//                  }
+//                  else{
+//                    // behind
+//                    if (check_car_s - car_s > right_behind_s)
+//                    {
+//                      right_behind_s = check_car_s;
+//                    }
+//                  }
+//                }
+//                if ((right_ahead_s > safe_ahead) && (right_behind_s < safe_behind))
+//                  // safe to merge left
+//                {
+//                  turn_right = true;
+//                }
+//              }
+            }
+
+            // find goal
+            int goal;
+            if((first_ahead_s >= second_ahead_s) && (first_ahead_s >= third_ahead_s))
+            {
+              goal = 0;
+            }
+            else if((second_ahead_s >= first_ahead_s) && (second_ahead_s >= third_ahead_s))
+            {
+              goal = 1;
+            }
+            else if((third_ahead_s >= first_ahead_s) && (third_ahead_s >= second_ahead_s))
+            {
+              goal = 2;
+            }
+
+//            cout<<"lane: "<<lane<<endl;
+//            cout<<"goal: "<< goal << endl;
+
+
+            // merge to goal lane
+            if(lane == 0)
+            {
+              if(goal == 1 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
+              {
+                lane = 1;
+              }
+              else if(goal == 2 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind && third_ahead_s >=
+                  safe_ahead && third_behind_s <= safe_behind)
+              {
+                lane = 2;
+              }
+            }
+            else if (lane == 1)
+            {
+//              cout<<first_ahead_s<<" "<<first_behind_s<<" "<< endl;
+//              cout<<third_ahead_s<<" "<<third_behind_s<<" "<< endl;
+              if(goal == 0 && first_ahead_s >= safe_ahead && first_behind_s <= safe_behind)
+              {
+                lane = 0;
+              }
+              else if(goal == 2 && third_ahead_s >= safe_ahead && third_behind_s <= safe_behind)
+              {
+                lane = 2;
+              }
+            }
+            else if (lane == 2)
+            {
+//              bool first = (first_ahead_s >= safe_ahead && first_behind_s <= safe_behind);
+//              bool second = (second_ahead_s >= safe_ahead && second_behind_s <= safe_behind);
+//              cout<<first<< " "<<second<<endl;
+              if(goal == 0 && first_ahead_s >= safe_ahead && first_behind_s <= safe_behind && second_ahead_s >=
+                  safe_ahead && second_behind_s <= safe_behind)
+              {
+                lane = 0;
+              }
+              else if (goal == 1 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
+              {
+                lane = 1;
+              }
+            }
+//            cout<<"lane: "<<lane<<endl;
           }
           else if (ref_vel < 49.5)
           {
@@ -329,10 +564,33 @@ int main() {
 						ptsy.push_back(ref_y);
 					}
 
-					//In Frenet add evenly 30m spaced points ahead of the starting reference
-					vector<double> next_wp0 = getXY(car_s + 30, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-					vector<double> next_wp1 = getXY(car_s + 60, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-					vector<double> next_wp2 = getXY(car_s + 90, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          int first_s;
+          int second_s;
+          int third_s;
+
+          if((old_lane - 1 == lane) || (old_lane + 1 == lane))
+          //In Frenet add evenly 30m spaced points ahead of the starting reference
+          {
+            first_s = 20;
+            second_s = 40;
+            third_s = 70;
+          }
+          else if ((old_lane - 2 == lane) || (old_lane + 2 == lane))
+          {
+            first_s = 25;
+            second_s = 45;
+            third_s = 75;
+          }
+          else
+          {
+            first_s = 30;
+            second_s = 60;
+            third_s = 90;
+          }
+
+					vector<double> next_wp0 = getXY(car_s + first_s, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+					vector<double> next_wp1 = getXY(car_s + second_s, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+					vector<double> next_wp2 = getXY(car_s + third_s, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
 					ptsx.push_back(next_wp0[0]);
 					ptsx.push_back(next_wp1[0]);
