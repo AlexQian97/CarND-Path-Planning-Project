@@ -16,7 +16,7 @@ First, there are five states used in this model.
 5. Lane Change Right (LCR)
 
 A terrible draft is attached.
-![states](https://github.com/AlexQian97/CarND-Path-Planning-Project/blob/master/images/states.jpeg)
+![states](https://github.com/AlexQian97/CarND-Path-Planning-Project/blob/master/images/fsm.jpeg)
 
 The logic is explained below.
 The ego car starts driving in its own lane (KL). If the car ahead is too close, which slows the ego car, a decision is 
