@@ -27,7 +27,7 @@ However, it is important to make sure it is safe to do the lane change. A safety
 enough space.
 
 A successful run screenshot is attached.
-![screenshot]
+![screenshot](https://github.com/AlexQian97/CarND-Path-Planning-Project/blob/master/images/successful_run.png)
 
 #### The map of the highway is in data/highway_map.txt
 Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
