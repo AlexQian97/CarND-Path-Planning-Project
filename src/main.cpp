@@ -255,7 +255,7 @@ int main() {
           int old_lane=lane;
 
           double safe_ahead = 15;
-          double safe_behind = 15;
+          double safe_behind = -10;
 
 //          double right_behind_s;
 //          double right_ahead_s;
@@ -296,8 +296,7 @@ int main() {
           if (too_close)
           {
 //            ref_vel -= 0.224;
-            ref_vel -= 0.1;
-
+            ref_vel -= 0.15;
             // plan for next move
             first_behind_s = -100;
             second_behind_s = -100;
@@ -473,20 +472,22 @@ int main() {
 
 //            cout<<"lane: "<<lane<<endl;
 //            cout<<"goal: "<< goal << endl;
-
+//            cout<<"first lane:"<<first_ahead_s<<" "<<first_behind_s<<endl;
+//            cout<<"second lane:"<<second_ahead_s<<" "<<second_behind_s<<endl;
+//            cout<<"third lane:"<<third_ahead_s<<" "<<third_behind_s<<endl;
 
             // merge to goal lane
             if(lane == 0)
             {
-              if(goal == 1 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
+              if((goal == 1 || goal == 2) && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
               {
                 lane = 1;
               }
-              else if(goal == 2 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind && third_ahead_s >=
-                  safe_ahead && third_behind_s <= safe_behind)
-              {
-                lane = 2;
-              }
+//              else if(goal == 2 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind && third_ahead_s >=
+//                  safe_ahead && third_behind_s <= safe_behind)
+//              {
+//                lane = 2;
+//              }
             }
             else if (lane == 1)
             {
@@ -506,21 +507,22 @@ int main() {
 //              bool first = (first_ahead_s >= safe_ahead && first_behind_s <= safe_behind);
 //              bool second = (second_ahead_s >= safe_ahead && second_behind_s <= safe_behind);
 //              cout<<first<< " "<<second<<endl;
-              if(goal == 0 && first_ahead_s >= safe_ahead && first_behind_s <= safe_behind && second_ahead_s >=
-                  safe_ahead && second_behind_s <= safe_behind)
-              {
-                lane = 0;
-              }
-              else if (goal == 1 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
+//              if(goal == 0 && first_ahead_s >= safe_ahead && first_behind_s <= safe_behind && second_ahead_s >=
+//                  safe_ahead && second_behind_s <= safe_behind)
+              if((goal == 0 || goal == 1) && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
               {
                 lane = 1;
               }
+//              else if (goal == 1 && second_ahead_s >= safe_ahead && second_behind_s <= safe_behind)
+//              {
+//                lane = 1;
+//              }
             }
 //            cout<<"lane: "<<lane<<endl;
           }
           else if (ref_vel < 49.5)
           {
-            ref_vel += 0.224;
+            ref_vel += 0.224 * 1.5;
           }
 
 					// create a list of widely spaced (x, y) waypoints, evenly spaced at 30m
@@ -571,15 +573,15 @@ int main() {
           if((old_lane - 1 == lane) || (old_lane + 1 == lane))
           //In Frenet add evenly 30m spaced points ahead of the starting reference
           {
-            first_s = 20;
-            second_s = 40;
-            third_s = 70;
+            first_s = 40;
+            second_s = 70;
+            third_s = 90;
           }
           else if ((old_lane - 2 == lane) || (old_lane + 2 == lane))
           {
-            first_s = 25;
-            second_s = 45;
-            third_s = 75;
+            first_s = 50;
+            second_s = 70;
+            third_s = 90;
           }
           else
           {
@@ -587,6 +589,9 @@ int main() {
             second_s = 60;
             third_s = 90;
           }
+//          first_s = 30;
+//          second_s = 60;
+//          third_s = 90;
 
 					vector<double> next_wp0 = getXY(car_s + first_s, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
 					vector<double> next_wp1 = getXY(car_s + second_s, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
