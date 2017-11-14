@@ -7,6 +7,28 @@ You can download the Term3 Simulator which contains the Path Planning Project fr
 ### Goals
 In this project your goal is to safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit. You will be provided the car's localization and sensor fusion data, there is also a sparse map list of waypoints around the highway. The car should try to go as close as possible to the 50 MPH speed limit, which means passing slower traffic when possible, note that other cars will try to change lanes too. The car should avoid hitting other cars at all cost as well as driving inside of the marked road lanes at all times, unless going from one lane to another. The car should be able to make one complete loop around the 6946m highway. Since the car is trying to go 50 MPH, it should take a little over 5 minutes to complete 1 loop. Also the car should not experience total acceleration over 10 m/s^2 and jerk that is greater than 10 m/s^3.
 
+### Reflection on model
+There are three major parts in this model.
+1. Get the car move in a given lane.
+There are three widely spaced points first chosen depending on the decision made by the planning step. There are three 
+possibilities in total. First, three points are separated by 30 meters if the decision is staying in lane. Second, the 
+distance between the first two points is decreased to 25 meters if the decision is changing lane twice at once. Third, 
+the distance between the first two points is decreased to 20 meters if the decision is changing lane once. A spline is fit 
+to these three points. After that, 50 points in total are chosen carefully to make the car drive in the given velocity.
+
+2. Determine when to make lane change and which lane to change to.
+The decision is only made when the car in the same lane is too close to prevent frequent lane changing. The decision is 
+made based on the distance between the cars in different lanes and our car. The highest distance means the maximum time 
+during which the car can just stay in the lane. As a result, the lane with highest distance is chosen to be the goal lane.
+
+3. Do the lane change when it is safe to do so.
+However, it is important to make sure it is safe to do the lane change. A safety distance of 30 meters (15 meters ahead and 
+15 meters behind) is used to determine if it is safe to perform a lane change. The car would go the goal lane if there is
+enough space.
+
+A successful run screenshot is attached.
+![screenshot]
+
 #### The map of the highway is in data/highway_map.txt
 Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
 
