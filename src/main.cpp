@@ -673,8 +673,6 @@ int main() {
 					json msgJson;
 
 
-					// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
-
 //					double dist_inc = 0.5;
 //					for(int i=0; i<50; i++)
 //					{
